@@ -93,6 +93,14 @@ public class MenuPrincipalTexto {
                 }
                  */
 
+                /*
+                if (estadoAtual == Estado.PESSOAS) {
+                    menuEspecificoTexto = new MenuPessoaTexto();
+                } else {
+                    menuEspecificoTexto = new MenuDepartamentoTexto(); // <-- implementar esta classe
+                }
+                 */
+
 				switch (opcao) {
 					case OP_ADICIONAR:
 						//adicionar um item
