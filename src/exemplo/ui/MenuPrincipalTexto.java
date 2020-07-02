@@ -80,11 +80,18 @@ public class MenuPrincipalTexto {
 					break;
 				//case OP_DEPTOS:
 				//	estadoAtual = Estado.DEPTOS;
-					//menuEspecificoTexto = new MenuDepartamentoTexto();
 				//	break;
 				}
 			} else {
-				menuEspecificoTexto = new MenuPessoaTexto();
+				menuEspecificoTexto = new MenuPessoaTexto(); // apagar esta linha
+
+                /*
+                if (estadoAtual == Estado.PESSOAS) {
+                    menuEspecificoTexto = new MenuPessoaTexto();
+                } else {
+                    menuEspecificoTexto = new MenuDepartamentoTexto(); // <-- implementar esta classe
+                }
+                 */
 
 				switch (opcao) {
 					case OP_ADICIONAR:
