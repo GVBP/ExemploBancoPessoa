@@ -6,7 +6,11 @@ public class MenuPrincipalTexto {
 	
 	private static final int OP_PESSOAS = 1;
 	private static final int OP_DEPTOS = 2;
-	
+
+	private static final int OP_ADICIONAR = 1;
+	private static final int OP_LISTAR = 2;
+	private static final int OP_EDITAR = 3;
+	private static final int OP_EXCLUIR = 4;
 	
 	// conjunto de estados possiveis no sistema
 	private enum Estado {PRINCIPAL, PESSOAS, DEPTOS};
@@ -36,6 +40,7 @@ public class MenuPrincipalTexto {
 	// método principal de execução do menu
 	public void executa() {
 		int opcao;
+		MenuEspecificoTexto menuEspecificoTexto;
 		
 		do {
 			// Mostra o menu principal ou o menu secundário
@@ -73,12 +78,34 @@ public class MenuPrincipalTexto {
 				case OP_PESSOAS:
 					estadoAtual = Estado.PESSOAS;
 					break;
-				case OP_DEPTOS:
-					estadoAtual = Estado.DEPTOS;
-					break;
+				//case OP_DEPTOS:
+				//	estadoAtual = Estado.DEPTOS;
+					//menuEspecificoTexto = new MenuDepartamentoTexto();
+				//	break;
 				}
 			} else {
-				
+				menuEspecificoTexto = new MenuPessoaTexto();
+
+				switch (opcao) {
+					case OP_ADICIONAR:
+						//adicionar um item
+						menuEspecificoTexto.adicionar();
+						break;
+					case OP_EDITAR:
+						//editar um item
+						menuEspecificoTexto.editar();
+						break;
+					case OP_EXCLUIR:
+						//excluir um item
+						menuEspecificoTexto.excluir();
+						break;
+					case OP_LISTAR:
+						//listar um item
+						menuEspecificoTexto.listarTodos();
+						break;
+					default:
+						System.out.println("Opção inválida. Tente novamente!");
+				}
 			}
 			
 			

@@ -10,7 +10,7 @@ import java.util.List;
 
 import exemplo.modelo.Departamento;
 
-public class DepartamentoDao {
+public class DepartamentoDao implements IDao<Departamento> {
 	
 	public DepartamentoDao() {
 		try {
@@ -37,9 +37,8 @@ public class DepartamentoDao {
 		Statement stmt = conn.createStatement();
 		stmt.execute(sqlCreate);
 	}
-	
-	
-	public List<Departamento> getAllDepartamentos() {
+
+	public List<Departamento> getAll() {
 		Connection conn = DatabaseAccess.getConnection();
 		Statement stmt = null;
 		ResultSet rs = null;
@@ -67,7 +66,7 @@ public class DepartamentoDao {
 		return departamentos;		
 	}
 	
-	public Departamento getDepartamentoById(int id) {
+	public Departamento getById(int id) {
 		Connection conn = DatabaseAccess.getConnection();
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
@@ -94,7 +93,7 @@ public class DepartamentoDao {
 		return departamento;		
 	}
 	
-	public void insereDepartamento(Departamento departamento) {
+	public void insert(Departamento departamento) {
 		Connection conn = DatabaseAccess.getConnection();
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
@@ -121,7 +120,7 @@ public class DepartamentoDao {
 				
 	}
 	
-	public void deleteDepartamento(int id) {
+	public void delete(int id) {
 		Connection conn = DatabaseAccess.getConnection();
 		PreparedStatement stmt = null;
 			
@@ -138,7 +137,7 @@ public class DepartamentoDao {
 		}
 	}
 	
-	public void updateDepartamento(Departamento departamento) {
+	public void update(Departamento departamento) {
 		Connection conn = DatabaseAccess.getConnection();
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
