@@ -4,8 +4,10 @@ import java.util.Scanner;
 
 public class MenuPrincipalTexto {
 	
-	private static final int OP_PESSOAS = 1;
-	private static final int OP_DEPTOS = 2;
+	private static final int OP_CLIENTES = 1;
+	private static final int OP_PEDIDOS = 2;
+	private static final int OP_PRODUTOS = 3;
+	private static final int OP_CATEGORIAS = 4;
 
 	private static final int OP_ADICIONAR = 1;
 	private static final int OP_LISTAR = 2;
@@ -13,7 +15,7 @@ public class MenuPrincipalTexto {
 	private static final int OP_EXCLUIR = 4;
 	
 	// conjunto de estados possiveis no sistema
-	private enum Estado {PRINCIPAL, PESSOAS, DEPTOS};
+	private enum Estado {PRINCIPAL, CLIENTES, PEDIDOS, PRODUTOS, CATEGORIAS};
 	
 	private Estado estadoAtual; // armazena o estado atual do menu
 	private Scanner entrada;
@@ -24,8 +26,10 @@ public class MenuPrincipalTexto {
 	}
 	
 	private void imprimeMenuPrincipal() {
-		System.out.println("1 - Administração de Pessoas");
-		System.out.println("2 - Administração de Departamentos");
+		System.out.println("1 - Administração de Clientes");
+		System.out.println("2 - Administração de Pedidos");
+		System.out.println("3 - Administração de Produtos");
+		System.out.println("4 - Administração de Categorias");
 	}
 	
 	private void imprimeMenuSecundário(String tipoMenu) {
@@ -44,17 +48,25 @@ public class MenuPrincipalTexto {
 		
 		do {
 			// Mostra o menu principal ou o menu secundário
-			System.out.println("Administração de RH"); // Título
+			System.out.println("Administração de Sistema"); // Título
 			System.out.println();
 			
 			switch(estadoAtual) {
-			// se estado PESSOAS imprime menu pessoas
-			case PESSOAS:
-				imprimeMenuSecundário("Pessoas");
+			// se estado CLIENTES imprime menu clientes
+			case CLIENTES:
+				imprimeMenuSecundário("Clientes");
 				break;
-			// se estado DEPTOS imprime menu departamentos
-			case DEPTOS:
-				imprimeMenuSecundário("Departamentos");
+			// se estado PEDIDOS imprime menu pedidos
+			case PEDIDOS:
+				imprimeMenuSecundário("Pedidos");
+				break;
+			// se estado PRODUTOS imprime menu produtos
+			case PRODUTOS:
+				imprimeMenuSecundário("Produtos");
+				break;
+			// se estado CATEGORIAS imprime menu categorias
+			case CATEGORIAS:
+				imprimeMenuSecundário("Categorias");
 				break;
 			default:
 				imprimeMenuPrincipal();
@@ -75,31 +87,29 @@ public class MenuPrincipalTexto {
 			// toma uma ação conforme o que o usuário escolhe
 			if (estadoAtual == Estado.PRINCIPAL) {
 				switch (opcao) {
-				case OP_PESSOAS:
-					estadoAtual = Estado.PESSOAS;
+				case OP_CLIENTES:
+					estadoAtual = Estado.CLIENTES;
 					break;
-				//case OP_DEPTOS:
-				//	estadoAtual = Estado.DEPTOS;
-				//	break;
+				case OP_PEDIDOS:
+					estadoAtual = Estado.PEDIDOS;
+					break;
+				case OP_PRODUTOS:
+					estadoAtual = Estado.PRODUTOS;
+					break;
+				case OP_CATEGORIAS:
+					estadoAtual = Estado.CATEGORIAS;
+					break;
 				}
 			} else {
-				menuEspecificoTexto = new MenuClienteTexto(); // apagar esta linha
-
-                /*
-                if (estadoAtual == Estado.PESSOAS) {
-                    menuEspecificoTexto = new MenuPessoaTexto();
+				if (estadoAtual == Estado.CLIENTES) {
+                    menuEspecificoTexto = new MenuClienteTexto();
+                } else if (estadoAtual == Estado.PEDIDOS) {
+                    menuEspecificoTexto = new MenuPedidoTexto();
+                } else if (estadoAtual == Estado.PRODUTOS) {
+                	menuEspecificoTexto = new MenuProdutoTexto();
                 } else {
-                    menuEspecificoTexto = new MenuDepartamentoTexto(); // <-- implementar esta classe
+                	menuEspecificoTexto = new MenuCategoriaTexto();
                 }
-                 */
-
-                /*
-                if (estadoAtual == Estado.PESSOAS) {
-                    menuEspecificoTexto = new MenuPessoaTexto();
-                } else {
-                    menuEspecificoTexto = new MenuDepartamentoTexto(); // <-- implementar esta classe
-                }
-                 */
 
 				switch (opcao) {
 					case OP_ADICIONAR:
