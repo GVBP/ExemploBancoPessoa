@@ -14,7 +14,7 @@ public class CategoriaDao implements IDao<Categoria> {
 	
 	public CategoriaDao() {
 		try {
-			createTable();
+			createTableCategoria();
 		} catch (SQLException e) {
 			//throw new RuntimeException("Erro ao criar tabela categoria");
 			e.printStackTrace();
@@ -22,20 +22,19 @@ public class CategoriaDao implements IDao<Categoria> {
 	}
 	
 	// Cria a tabela se não existir
-	private void createTable() throws SQLException {
+	private void createTableCategoria() throws SQLException {
 		final String sqlCreate = "IF NOT EXISTS (" 
 				+ "SELECT * FROM sys.tables t JOIN sys.schemas s ON " 
 				+ "(t.schema_id = s.schema_id) WHERE s.name = 'dbo'" 
 				+ "AND t.name = 'Categoria')"
 				+ "CREATE TABLE Categoria"
-				+ " (categoriaID int NOT NULL,"
+				+ " (categoriaID int IDENTITY,"
 				+ " nome VARCHAR(50),"
-				+ " CONSTRAINT PK_Categoria PRIMARY KEY NONCLUSTERED (categoriaID),"
-				+ " CONSTRAINT FK_Produto FOREIGN KEY (produtoID)" 
-				+ " REFERENCES ExemploBanco.Produto (produtoID)" 
-				+ " ON DELETE CASCADE"
-				+ " ON UPDATE CASCADE"
-				+ " )";
+				+ " produtoID int,"
+				+ " CONSTRAINT PK_Categoria PRIMARY KEY NONCLUSTERED (categoriaID))"
+				+ " ALTER TABLE Categoria" 
+				+ " ADD CONSTRAINT FK_Produto FOREIGN KEY (produtoID)" 
+				+ " REFERENCES Produto (produtoID)";
 		
 		Connection conn = DatabaseAccess.getConnection();
 		
@@ -79,7 +78,7 @@ public class CategoriaDao implements IDao<Categoria> {
 		Categoria categoria = null;
 		
 		try {
-			String SQL = "SELECT * FROM Categoria WHERE id = ?"; // consulta de SELECT
+			String SQL = "SELECT * FROM Categoria WHERE categoriaID = ?"; // consulta de SELECT
 			stmt = conn.prepareStatement(SQL);
 			stmt.setInt(1, id);
 			
@@ -129,7 +128,7 @@ public class CategoriaDao implements IDao<Categoria> {
 		PreparedStatement stmt = null;
 			
 		try {
-			String SQL = "DELETE Categoria WHERE id=?";
+			String SQL = "DELETE Categoria WHERE categoriaID=?";
 			stmt = conn.prepareStatement(SQL);
 			stmt.setInt(1, id);
 			
@@ -147,7 +146,7 @@ public class CategoriaDao implements IDao<Categoria> {
 		ResultSet rs = null;
 				
 		try {
-			String SQL = "UPDATE Categoria SET nome = ? WHERE id=?";
+			String SQL = "UPDATE Categoria SET nome = ? WHERE categoriaID=?";
 			stmt = conn.prepareStatement(SQL);
 	    	stmt.setString(1, categoria.getNome()); // insira na primeira ? o nome do categoria
 	    	// insira na última ? o id do categoria
@@ -164,7 +163,7 @@ public class CategoriaDao implements IDao<Categoria> {
 	
 	private Categoria getCategoriaFromRs(ResultSet rs) throws SQLException {
 		Categoria c = new Categoria(); // cria um objeto de categoria
-		c.setId(rs.getInt("id")); // insere id recuperado do banco no categoria
+		c.setId(rs.getInt("categoriaID")); // insere id recuperado do banco no categoria
 		c.setNome(rs.getString("nome")); // insere nome recuperado do banco no categoria
 		
 		return c;

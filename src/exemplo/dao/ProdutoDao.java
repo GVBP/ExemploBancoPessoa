@@ -11,45 +11,42 @@ import java.util.List;
 import exemplo.modelo.Produto;
 
 public class ProdutoDao implements IDao<Produto> {
-	
+
 	public ProdutoDao() {
 		try {
-			createTable();
+			createTableProduto();
 		} catch (SQLException e) {
-			//throw new RuntimeException("Erro ao criar tabela produto");
+			//throw new RuntimeException("Erro ao criar tabela categoria");
 			e.printStackTrace();
 		}
 	}
 	
 	// Cria a tabela se não existir
-	private void createTable() throws SQLException {
+	private void createTableProduto() throws SQLException {
 		final String sqlCreate = "IF NOT EXISTS (" 
 				+ "SELECT * FROM sys.tables t JOIN sys.schemas s ON " 
 				+ "(t.schema_id = s.schema_id) WHERE s.name = 'dbo'" 
 				+ "AND t.name = 'Produto')"
 				+ "CREATE TABLE Produto"
-				+ " (produtoID int NOT NULL,"
+				+ " (produtoID int IDENTITY,"
 				+ " nome VARCHAR(250),"
 				+ " preco Float(24),"
 				+ " estoque int,"
-				+ " CONSTRAINT PK_Produto PRIMARY KEY NONCLUSTERED (produtoID),"
-				+ " CONSTRAINT FK_Categoria FOREIGN KEY (categoriaID)" 
-				+ " REFERENCES ExemploBanco.Item (categoriaID)" 
-				+ " ON DELETE CASCADE"
-				+ " ON UPDATE CASCADE"
-				+ " ),"
-				+ " CONSTRAINT FK_Item FOREIGN KEY (itemID)" 
-				+ " REFERENCES ExemploBanco.Item (itemID)" 
-				+ " ON DELETE CASCADE"
-				+ " ON UPDATE CASCADE"
-				+ " )";
+				+ " categoriaID int,"
+				+ " itemID int,"
+				+ " CONSTRAINT PK_Produto PRIMARY KEY NONCLUSTERED (produtoID))"
+				+ " ALTER TABLE Produto" 
+				+ " ADD CONSTRAINT FK_Categoria FOREIGN KEY (categoriaID)" 
+				+ " REFERENCES Categoria (categoriaID)";
+				//+ " CONSTRAINT FK_Item FOREIGN KEY (itemID)" 
+				//+ " REFERENCES Item (itemID)";
 		
 		Connection conn = DatabaseAccess.getConnection();
 		
 		Statement stmt = conn.createStatement();
 		stmt.execute(sqlCreate);
 	}
-
+	
 	public List<Produto> getAll() {
 		Connection conn = DatabaseAccess.getConnection();
 		Statement stmt = null;
@@ -86,7 +83,7 @@ public class ProdutoDao implements IDao<Produto> {
 		Produto produto = null;
 		
 		try {
-			String SQL = "SELECT * FROM Produto WHERE id = ?"; // consulta de SELECT
+			String SQL = "SELECT * FROM Produto WHERE produtoID = ?"; // consulta de SELECT
 			stmt = conn.prepareStatement(SQL);
 			stmt.setInt(1, id);
 			
@@ -139,7 +136,7 @@ public class ProdutoDao implements IDao<Produto> {
 		PreparedStatement stmt = null;
 			
 		try {
-			String SQL = "DELETE Produto WHERE id=?";
+			String SQL = "DELETE Produto WHERE produtoID=?";
 			stmt = conn.prepareStatement(SQL);
 			stmt.setInt(1, id);
 			
@@ -157,7 +154,7 @@ public class ProdutoDao implements IDao<Produto> {
 		ResultSet rs = null;
 				
 		try {
-			String SQL = "UPDATE Produto SET nome = ?, preco = ?, estoque = ? WHERE id=?";
+			String SQL = "UPDATE Produto SET nome = ?, preco = ?, estoque = ? WHERE produtoID=?";
 			stmt = conn.prepareStatement(SQL);
 	    	stmt.setString(1, produto.getNome()); // insira na primeira ? o nome do produto
 	    	stmt.setDouble(2, produto.getPreco()); // insira na segunda ? o preço do produto
@@ -176,7 +173,7 @@ public class ProdutoDao implements IDao<Produto> {
 	
 	private Produto getProdutoFromRs(ResultSet rs) throws SQLException {
 		Produto p = new Produto(); // cria um objeto de pessoa
-		p.setId(rs.getInt("id")); // insere id recuperado do banco no produto
+		p.setId(rs.getInt("produtoID")); // insere id recuperado do banco no produto
 		p.setNome(rs.getString("nome")); // insere nome recuperado do banco produto
 		p.setPreco(rs.getDouble("preco")); // insere preço recuperado do banco produto
 		p.setEstoque(rs.getInt("estoque")); // insere estoque recuperado do banco produto

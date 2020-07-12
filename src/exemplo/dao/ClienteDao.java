@@ -14,30 +14,29 @@ public class ClienteDao implements IDao<Cliente> {
 	
 	public ClienteDao() {
 		try {
-			createTable();
+			createTableCliente();
 		} catch (SQLException e) {
-			//throw new RuntimeException("Erro ao criar tabela cliente");
+			//throw new RuntimeException("Erro ao criar tabela categoria");
 			e.printStackTrace();
 		}
 	}
 	
 	// Cria a tabela se não existir
-	private void createTable() throws SQLException {
+	private void createTableCliente() throws SQLException {
 		final String sqlCreate = "IF NOT EXISTS (" 
 				+ "SELECT * FROM sys.tables t JOIN sys.schemas s ON " 
 				+ "(t.schema_id = s.schema_id) WHERE s.name = 'dbo'" 
 				+ "AND t.name = 'Cliente')"
 				+ "CREATE TABLE Cliente"
-				+ " (clienteID int NOT NULL,"
+				+ " (clienteID int IDENTITY,"
 				+ " cpf VARCHAR(11),"
 				+ " nome VARCHAR(50),"
 				+ " endereco VARCHAR(250),"
-				+ " CONSTRAINT PK_Cliente PRIMARY KEY NONCLUSTERED (clienteID),"
-				+ " CONSTRAINT FK_Pedido FOREIGN KEY (pedidoID)" 
-				+ " REFERENCES ExemploBanco.Pedido (pedidoID)" 
-				+ " ON DELETE CASCADE"
-				+ " ON UPDATE CASCADE"
-				+ " )";
+				+ " pedidoID int,"
+				+ " CONSTRAINT PK_Cliente PRIMARY KEY NONCLUSTERED (clienteID))"
+				+ " ALTER TABLE Cliente" 
+				+ " ADD CONSTRAINT FK_Pedido FOREIGN KEY (pedidoID)" 
+				+ " REFERENCES Pedido (pedidoID)";
 		
 		Connection conn = DatabaseAccess.getConnection();
 		
@@ -81,7 +80,7 @@ public class ClienteDao implements IDao<Cliente> {
 		Cliente cliente = null;
 		
 		try {
-			String SQL = "SELECT * FROM Cliente WHERE id = ?"; // consulta de SELECT
+			String SQL = "SELECT * FROM Cliente WHERE clienteID = ?"; // consulta de SELECT
 			stmt = conn.prepareStatement(SQL);
 			stmt.setInt(1, id);
 			
@@ -133,7 +132,7 @@ public class ClienteDao implements IDao<Cliente> {
 		PreparedStatement stmt = null;
 			
 		try {
-			String SQL = "DELETE Cliente WHERE id=?";
+			String SQL = "DELETE Cliente WHERE clienteID=?";
 			stmt = conn.prepareStatement(SQL);
 			stmt.setInt(1, id);
 			
@@ -151,7 +150,7 @@ public class ClienteDao implements IDao<Cliente> {
 		ResultSet rs = null;
 				
 		try {
-			String SQL = "UPDATE Cliente SET cpf = ?, nome = ?, endereco = ? WHERE id=?";
+			String SQL = "UPDATE Cliente SET cpf = ?, nome = ?, endereco = ? WHERE clienteID=?";
 			stmt = conn.prepareStatement(SQL);
 			stmt.setString(1, cliente.getCpf()); // insira na primeira ? o cpf do cliente
 	    	stmt.setString(2, cliente.getNome()); // insira na segunda ? o nome do cliente
@@ -170,7 +169,7 @@ public class ClienteDao implements IDao<Cliente> {
 	
 	private Cliente getClienteFromRs(ResultSet rs) throws SQLException {
 		Cliente c = new Cliente(); // cria um objeto de cliente
-		c.setId(rs.getInt("id")); // insere id recuperado do banco no cliente
+		c.setId(rs.getInt("clienteID")); // insere id recuperado do banco no cliente
 		c.setCpf(rs.getString("cpf")); // insere cpf recuperado do banco no cliente
 		c.setNome(rs.getString("nome")); // insere nome recuperado do banco no cliente
 		c.setEndereco(rs.getString("endereco")); // insere endereço recuperado do banco no cliente

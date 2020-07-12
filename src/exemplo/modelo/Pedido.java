@@ -5,14 +5,14 @@ package exemplo.modelo;
 public class Pedido {
 	private int id;
 	private String data;
-	private Status statusAtual;
+	private String statusAtual;
 	private String entrega;
 	//private Cliente cliente;
 	//private List<Item> itens;
 	
 	public Pedido() { }
 	
-	public Pedido(int id, String data, Status statusAtual, String entrega) {		
+	public Pedido(int id, String data, String statusAtual, String entrega) {		
 		this.id = id;
 		this.data = data;
 		this.statusAtual = statusAtual;
@@ -35,12 +35,12 @@ public class Pedido {
 		this.data = data;
 	}
 
-	public Status getStatusAtual() {
+	public String getStatusAtual() {
 		return statusAtual;
 	}
 
-	public void setStatusAtual(Object statusAtual) {
-		this.statusAtual = (Status) statusAtual;
+	public void setStatusAtual(String statusAtual) {
+		this.statusAtual = statusAtual;
 	}
 
 	public String getEntrega() {

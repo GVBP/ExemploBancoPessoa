@@ -11,45 +11,42 @@ import java.util.List;
 import exemplo.modelo.Pedido;
 
 public class PedidoDao implements IDao<Pedido> {
-	
+
 	public PedidoDao() {
 		try {
-			createTable();
+			createTablePedido();
 		} catch (SQLException e) {
-			//throw new RuntimeException("Erro ao criar tabela pedido");
+			//throw new RuntimeException("Erro ao criar tabela categoria");
 			e.printStackTrace();
 		}
 	}
 	
 	// Cria a tabela se não existir
-	private void createTable() throws SQLException {
+	private void createTablePedido() throws SQLException {
 		final String sqlCreate = "IF NOT EXISTS (" 
 				+ "SELECT * FROM sys.tables t JOIN sys.schemas s ON " 
 				+ "(t.schema_id = s.schema_id) WHERE s.name = 'dbo'" 
 				+ "AND t.name = 'Pedido')"
 				+ "CREATE TABLE Pedido"
-				+ " (pedidoID int NOT NULL,"
+				+ " (pedidoID int IDENTITY,"
 				+ " data VARCHAR(8),"
 				+ " statusAtual VARCHAR(50),"
 				+ " entrega VARCHAR(250),"
-				+ " CONSTRAINT PK_Pedido PRIMARY KEY NONCLUSTERED (pedidoID),"
-				+ " CONSTRAINT FK_Cliente FOREIGN KEY (clienteID)" 
-				+ " REFERENCES ExemploBanco.Cliente (clienteID)" 
-				+ " ON DELETE CASCADE"
-				+ " ON UPDATE CASCADE"
-				+ " ),"
-				+ " CONSTRAINT FK_Item FOREIGN KEY (itemID)" 
-				+ " REFERENCES ExemploBanco.Item (itemID)" 
-				+ " ON DELETE CASCADE"
-				+ " ON UPDATE CASCADE"
-				+ " )";
+				+ " clienteID int,"
+				+ " itemID int,"
+				+ " CONSTRAINT PK_Pedido PRIMARY KEY NONCLUSTERED (pedidoID))"
+				+ " ALTER TABLE Pedido" 
+				+ " ADD CONSTRAINT FK_Cliente FOREIGN KEY (clienteID)" 
+				+ " REFERENCES Cliente (clienteID)";
+				//+ " CONSTRAINT FK_Item FOREIGN KEY (itemID)" 
+				//+ " REFERENCES Item (itemID)";
 		
 		Connection conn = DatabaseAccess.getConnection();
 		
 		Statement stmt = conn.createStatement();
 		stmt.execute(sqlCreate);
 	}
-
+	
 	public List<Pedido> getAll() {
 		Connection conn = DatabaseAccess.getConnection();
 		Statement stmt = null;
@@ -86,7 +83,7 @@ public class PedidoDao implements IDao<Pedido> {
 		Pedido pedido = null;
 		
 		try {
-			String SQL = "SELECT * FROM Pedido WHERE id = ?"; // consulta de SELECT
+			String SQL = "SELECT * FROM Pedido WHERE pedidoID = ?"; // consulta de SELECT
 			stmt = conn.prepareStatement(SQL);
 			stmt.setInt(1, id);
 			
@@ -114,7 +111,7 @@ public class PedidoDao implements IDao<Pedido> {
 			String SQL = "INSERT INTO Pedido (data, statusAtual, entrega) VALUES (?, ?, ?)";
 			stmt = conn.prepareStatement(SQL, Statement.RETURN_GENERATED_KEYS);
 	    	stmt.setString(1, pedido.getData()); // insira na primeira ? a data do pedido
-	    	stmt.setObject(2, pedido.getStatusAtual()); // insira na segunda ? o statusAtual do pedido
+	    	stmt.setString(2, pedido.getStatusAtual()); // insira na segunda ? o statusAtual do pedido
 	    	stmt.setString(3, pedido.getEntrega()); // insira na terceira ? a entrega do pedido
 	    	
 			
@@ -139,7 +136,7 @@ public class PedidoDao implements IDao<Pedido> {
 		PreparedStatement stmt = null;
 			
 		try {
-			String SQL = "DELETE Pedido WHERE id=?";
+			String SQL = "DELETE Pedido WHERE pedidoID=?";
 			stmt = conn.prepareStatement(SQL);
 			stmt.setInt(1, id);
 			
@@ -157,10 +154,10 @@ public class PedidoDao implements IDao<Pedido> {
 		ResultSet rs = null;
 				
 		try {
-			String SQL = "UPDATE Pedido SET data = ?, statusAtual = ?, entrega = ? WHERE id=?";
+			String SQL = "UPDATE Pedido SET data = ?, statusAtual = ?, entrega = ? WHERE pedidoID=?";
 			stmt = conn.prepareStatement(SQL);
 	    	stmt.setString(1, pedido.getData()); // insira na primeira ? a data do pedido
-	    	stmt.setObject(2, pedido.getStatusAtual()); // insira na segunda ? o statusAtual do pedido
+	    	stmt.setString(2, pedido.getStatusAtual()); // insira na segunda ? o statusAtual do pedido
 	    	stmt.setString(3, pedido.getEntrega()); // insira na terceira ? a entrega d pedido
 	    	// insira na última ? o id da pessoa
 	    	stmt.setInt(4, pedido.getId());
@@ -176,9 +173,9 @@ public class PedidoDao implements IDao<Pedido> {
 	
 	private Pedido getPedidoFromRs(ResultSet rs) throws SQLException {
 		Pedido p = new Pedido(); // cria um objeto de pessoa
-		p.setId(rs.getInt("id")); // insere id recuperado do banco no pedido
+		p.setId(rs.getInt("pedidoID")); // insere id recuperado do banco no pedido
 		p.setData(rs.getString("data")); // insere data recuperado do banco pedido
-		p.setStatusAtual(rs.getObject("statusAtual")); // insere statusAtual recuperado do banco pedido
+		p.setStatusAtual(rs.getString("statusAtual")); // insere statusAtual recuperado do banco pedido
 		p.setEntrega(rs.getString("entrega")); // insere entrega recuperado do banco pedido
 		
 		return p;

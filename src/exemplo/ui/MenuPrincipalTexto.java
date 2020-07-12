@@ -128,6 +128,8 @@ public class MenuPrincipalTexto {
 						//listar um item
 						menuEspecificoTexto.listarTodos();
 						break;
+					case 0:
+						break;
 					default:
 						System.out.println("Opção inválida. Tente novamente!");
 				}

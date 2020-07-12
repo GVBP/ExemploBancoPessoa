@@ -4,15 +4,9 @@ import java.util.List;
 
 import exemplo.dao.PedidoDao;
 import exemplo.modelo.Pedido;
-import exemplo.modelo.Status;
 
 public class MenuPedidoTexto extends MenuEspecificoTexto {
 	
-	private static final int OP_ANALISE = 1;
-	private static final int OP_PROCESSO = 2;
-	private static final int OP_CONCLUIDO = 3;
-	
-	private Status statusAtual; // armazena o status atual do pedido
     private PedidoDao dao;
 
     public MenuPedidoTexto() {
@@ -26,28 +20,6 @@ public class MenuPedidoTexto extends MenuEspecificoTexto {
         entrada.nextLine();
 
         return id;
-    }
-    
-    private void defineStatus() {
-    	System.out.println();
-    	System.out.print("1 - Em análise");
-    	System.out.print("2 - Em processo");
-    	System.out.print("3 - Concluido");
-    	int status = entrada.nextInt();
-    	
-    	switch (status) {
-			case OP_ANALISE:
-				statusAtual = Status.ANALISE;
-				break;
-			case OP_PROCESSO:
-				statusAtual = Status.PROCESSO;
-				break;
-			case OP_CONCLUIDO:
-				statusAtual = Status.CONCLUIDO;
-				break;
-			default:
-				System.out.println("Opção inválida. Tente novamente!");
-		}
     }
 
     private Pedido obterDadosPedido(Pedido pedido) {
@@ -63,14 +35,14 @@ public class MenuPedidoTexto extends MenuEspecificoTexto {
         String data = entrada.nextLine();
 
         System.out.print("Digite o status do pedido: ");
-        defineStatus();
+        String status = entrada.nextLine();
         
         System.out.print("Digite o endereço da entrega do pedido: ");
         String entrega = entrada.nextLine();
         entrada.nextLine();
 
         p.setData(data);
-        p.setStatusAtual(statusAtual);
+        p.setStatusAtual(status);
         p.setEntrega(entrega);
 
         return p;
