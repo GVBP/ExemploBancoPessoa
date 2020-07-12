@@ -3,10 +3,10 @@ package exemplo;
 import java.util.List;
 
 import exemplo.dao.DatabaseAccess;
-import exemplo.dao.DepartamentoDao;
-import exemplo.dao.PessoaDao;
-import exemplo.modelo.Departamento;
-import exemplo.modelo.Pessoa;
+import exemplo.dao.PedidoDao;
+import exemplo.dao.ClienteDao;
+import exemplo.modelo.Pedido;
+import exemplo.modelo.Cliente;
 import exemplo.ui.MenuPrincipalTexto;
 
 public class Principal {
@@ -59,16 +59,16 @@ public class Principal {
 		menu.executa();
 	}
 
-	private static void imprimePessoas(List<Pessoa> pessoas) {
+	private static void imprimePessoas(List<Cliente> pessoas) {
 		System.out.println("Lista de pessoas:");
-        for (Pessoa pessoa : pessoas) {
+        for (Cliente pessoa : pessoas) {
 			System.out.println(pessoa);
 		}
 	}
 	
-	private static void imprimeDepartamentos(List<Departamento> departamentos) {
+	private static void imprimeDepartamentos(List<Pedido> departamentos) {
 		System.out.println("Lista de departamentos:");
-        for (Departamento departamento : departamentos) {
+        for (Pedido departamento : departamentos) {
 			System.out.println(departamento);
 		}
 	}

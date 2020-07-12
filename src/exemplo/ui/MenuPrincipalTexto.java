@@ -83,7 +83,7 @@ public class MenuPrincipalTexto {
 				//	break;
 				}
 			} else {
-				menuEspecificoTexto = new MenuPessoaTexto(); // apagar esta linha
+				menuEspecificoTexto = new MenuClienteTexto(); // apagar esta linha
 
                 /*
                 if (estadoAtual == Estado.PESSOAS) {

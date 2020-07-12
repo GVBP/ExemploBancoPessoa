@@ -8,15 +8,15 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import exemplo.modelo.Departamento;
+import exemplo.modelo.Categoria;
 
-public class DepartamentoDao implements IDao<Departamento> {
+public class CategoriaDao implements IDao<Categoria> {
 	
-	public DepartamentoDao() {
+	public CategoriaDao() {
 		try {
 			createTable();
 		} catch (SQLException e) {
-			//throw new RuntimeException("Erro ao criar tabela departamento");
+			//throw new RuntimeException("Erro ao criar tabela categoria");
 			e.printStackTrace();
 		}
 	}
@@ -26,94 +26,98 @@ public class DepartamentoDao implements IDao<Departamento> {
 		final String sqlCreate = "IF NOT EXISTS (" 
 				+ "SELECT * FROM sys.tables t JOIN sys.schemas s ON " 
 				+ "(t.schema_id = s.schema_id) WHERE s.name = 'dbo'" 
-				+ "AND t.name = 'Departamento')"
-				+ "CREATE TABLE Departamento"
-				+ " (id	int	IDENTITY,"
-				+ "  nome	VARCHAR(255),"
-				+ "  PRIMARY KEY (id))";
+				+ "AND t.name = 'Categoria')"
+				+ "CREATE TABLE Categoria"
+				+ " (categoriaID int NOT NULL,"
+				+ " nome VARCHAR(50),"
+				+ " CONSTRAINT PK_Categoria PRIMARY KEY NONCLUSTERED (categoriaID),"
+				+ " CONSTRAINT FK_Produto FOREIGN KEY (produtoID)" 
+				+ " REFERENCES ExemploBanco.Produto (produtoID)" 
+				+ " ON DELETE CASCADE"
+				+ " ON UPDATE CASCADE"
+				+ " )";
 		
 		Connection conn = DatabaseAccess.getConnection();
 		
 		Statement stmt = conn.createStatement();
 		stmt.execute(sqlCreate);
 	}
-
-	public List<Departamento> getAll() {
+	
+	public List<Categoria> getAll() {
 		Connection conn = DatabaseAccess.getConnection();
 		Statement stmt = null;
 		ResultSet rs = null;
 		
-		List<Departamento> departamentos = new ArrayList<Departamento>();
+		List<Categoria> categorias = new ArrayList<Categoria>();
 		
 		try {
 			stmt = conn.createStatement();
 			
-			String SQL = "SELECT * FROM Departamento"; // consulta de SELECT
+			String SQL = "SELECT * FROM Categoria"; // consulta de SELECT
 	        rs = stmt.executeQuery(SQL); // executa o SELECT
 	        
 	        while (rs.next()) {
-	        	Departamento d = getDepartamentoFromRs(rs);
+	        	Categoria c = getCategoriaFromRs(rs);
 	        	
-	        	departamentos.add(d);
+	        	categorias.add(c);
 	        }
 			
 		} catch (SQLException e) {
-			throw new RuntimeException("[getAllDepartamentos] Erro ao selecionar todos os departamentos", e);
+			throw new RuntimeException("[getAllCategorias] Erro ao selecionar todos os categorias", e);
 		} finally {
 			close(conn, stmt, rs);
 		}
 		
-		return departamentos;		
+		return categorias;		
 	}
 	
-	public Departamento getById(int id) {
+	public Categoria getById(int id) {
 		Connection conn = DatabaseAccess.getConnection();
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		
-		Departamento departamento = null;
+		Categoria categoria = null;
 		
 		try {
-			String SQL = "SELECT * FROM Departamento WHERE id = ?"; // consulta de SELECT
+			String SQL = "SELECT * FROM Categoria WHERE id = ?"; // consulta de SELECT
 			stmt = conn.prepareStatement(SQL);
 			stmt.setInt(1, id);
 			
 	        rs = stmt.executeQuery(); // executa o SELECT
 	        
 	        while (rs.next()) {
-	        	departamento = getDepartamentoFromRs(rs);
+	        	categoria = getCategoriaFromRs(rs);
 	        }
 			
 		} catch (SQLException e) {
-			throw new RuntimeException("[getDepartamentoById] Erro ao selecionar o departamento por id", e);
+			throw new RuntimeException("[getCategoriaById] Erro ao selecionar o categoria por id", e);
 		} finally {
 			close(conn, stmt, rs);
 		}
 		
-		return departamento;		
+		return categoria;		
 	}
 	
-	public void insert(Departamento departamento) {
+	public void insert(Categoria categoria) {
 		Connection conn = DatabaseAccess.getConnection();
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 				
 		try {
-			String SQL = "INSERT INTO Departamento (nome) VALUES (?)";
+			String SQL = "INSERT INTO Categoria (nome) VALUES (?)";
 			stmt = conn.prepareStatement(SQL, Statement.RETURN_GENERATED_KEYS);
-	    	stmt.setString(1, departamento.getNome()); // insira na segunda ? o nome da pessoa
-	    	
+	    	stmt.setString(1, categoria.getNome()); // insira na primeira ? o nome do categoria
 			
 	        stmt.executeUpdate(); // executa o SELECT
 	        
 	        rs = stmt.getGeneratedKeys();
 	        
 	        if (rs.next()) {
-	        	departamento.setId(rs.getInt(1));
+	        	categoria.setId(rs.getInt(1));
 	        }
 			
 		} catch (SQLException e) {
-			throw new RuntimeException("[insereDepartamento] Erro ao inserir o departamento", e);
+			throw new RuntimeException("[insereCategoria] Erro ao inserir o categoria", e);
 		} finally {
 			close(conn, stmt, rs);
 		}
@@ -125,45 +129,45 @@ public class DepartamentoDao implements IDao<Departamento> {
 		PreparedStatement stmt = null;
 			
 		try {
-			String SQL = "DELETE Departamento WHERE id=?";
+			String SQL = "DELETE Categoria WHERE id=?";
 			stmt = conn.prepareStatement(SQL);
 			stmt.setInt(1, id);
 			
 	        stmt.executeUpdate(); 			
 		} catch (SQLException e) {
-			throw new RuntimeException("[deleteDepartamento] Erro ao remover o departamento por id", e);
+			throw new RuntimeException("[deleteCategoria] Erro ao remover o categoria por id", e);
 		} finally {
 			close(conn, stmt, null);
 		}
 	}
 	
-	public void update(Departamento departamento) {
+	public void update(Categoria categoria) {
 		Connection conn = DatabaseAccess.getConnection();
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 				
 		try {
-			String SQL = "UPDATE Departamento SET nome = ? WHERE id=?";
+			String SQL = "UPDATE Categoria SET nome = ? WHERE id=?";
 			stmt = conn.prepareStatement(SQL);
-	    	stmt.setString(1, departamento.getNome()); // insira na primeira ? o nome da pessoa
-	    	// insira na última ? o id da pessoa
-	    	stmt.setInt(2, departamento.getId());
+	    	stmt.setString(1, categoria.getNome()); // insira na primeira ? o nome do categoria
+	    	// insira na última ? o id do categoria
+	    	stmt.setInt(2, categoria.getId());
 	    	
 	        stmt.executeUpdate(); // executa o UPDATE			
 		} catch (SQLException e) {
-			throw new RuntimeException("[updateDepartamento] Erro ao atualizar o departamento", e);
+			throw new RuntimeException("[updateCategoria] Erro ao atualizar o categoria", e);
 		} finally {
 			close(conn, stmt, rs);
 		}
 				
 	}
 	
-	private Departamento getDepartamentoFromRs(ResultSet rs) throws SQLException {
-		Departamento d = new Departamento(); // cria um objeto de pessoa
-		d.setId(rs.getInt("id")); // insere id recuperado do banco na pessoa
-		d.setNome(rs.getString("nome")); // insere nome recuperado do banco na pessoa
+	private Categoria getCategoriaFromRs(ResultSet rs) throws SQLException {
+		Categoria c = new Categoria(); // cria um objeto de categoria
+		c.setId(rs.getInt("id")); // insere id recuperado do banco no categoria
+		c.setNome(rs.getString("nome")); // insere nome recuperado do banco no categoria
 		
-		return d;
+		return c;
 	}
 	
 	private void close(Connection conn, Statement stmt, ResultSet rs) {
